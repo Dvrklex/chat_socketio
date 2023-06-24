@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   socket.on("set nickname", (id, user) => {
     addUser(id, user);
-    io.emit("userConnected", `${getUser(socket.id).nickname} se ha unido al chat!`, getMessages());
+    io.emit("userConnected", `${getUser(socket.id).nickname} se ha unido al chat!`);//,getMessages()
     console.log("userConnected");
   });
 
