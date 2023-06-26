@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import 'boxicons'
+import SkillsTable from './SkillsTable';
 function UserForm({ handleUsernameSubmit }) {
   const [username, setUsername] = useState('');
 
@@ -13,15 +14,22 @@ function UserForm({ handleUsernameSubmit }) {
   const handleInputChange = (e) => {
     setUsername(e.target.value);
   };
-
+  
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Username:
-        <input type="text" value={username} onChange={handleInputChange} />
+    <div>
+
+    <form onSubmit={handleSubmit} class="userForm">
+      <label id="userNameLabel">
+        Ingresa un nombre para ingresar al chat
       </label>
-      <button type="submit">Enter</button>
+        <input id="userNameInput" type="text" value={username} onChange={handleInputChange} placeholder='Escribir nombre... ' />
+      <button type="submit" id="userNameButton">Enter</button>
     </form>
+    <h2 class="skillTitle">Proyecto creado con</h2>
+    <div class="skillTable">
+        <SkillsTable></SkillsTable>
+    </div>
+    </div>
   );
 }
 

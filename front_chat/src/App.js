@@ -11,6 +11,8 @@ function App() {
 
   return (
     <div className="container">
+      <h1 id="title">Bienvenido a ChatIO, {username}!</h1>
+
       {username ? (
         <ChatRoom username={username} />
       ) : (

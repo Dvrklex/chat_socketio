@@ -88,31 +88,35 @@ function ChatRoom({ username }) {
   };
 
   return (
-    <div>
-      <h1>Welcome to the Chat Room, {username}!</h1>
+   
+      <div class="containerChat">
+       
+        <div class="chat">
+          
+          <ul id="messages" className="messages">
+            {messages.map((message, index) => (
+              <li key={index} className={getMessageClassName(message.type)}>
+                {message.text}
+              </li>
+            ))}
+          </ul>
 
-      
-      <ul id="messages" className="messages">
-        {messages.map((message, index) => (
-          <li key={index} className={getMessageClassName(message.type)}>
-            {message.text}
-          </li>
-        ))}
-      </ul>
+          <div id="writing-status">
+            {typingUsers.length > 0 &&
+              typingUsers.map((user, index) => (
+                <div key={index}>{`${user} está escribiendo...`}</div>
+              ))}
+          </div>
 
-      <div id="writing-status">
-        {typingUsers.length > 0 &&
-          typingUsers.map((user, index) => (
-            <div key={index}>{`${user} is typing...`}</div>
-          ))}
+          <form onSubmit={handleSubmit}>
+            <input type="text" value={inputValue} onChange={handleInputChange} placeholder='Enviar mensaje...' />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+        <div class="sidebar">
+            <UserList users={connectedUsers} />
+        </div>
       </div>
-
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={inputValue} onChange={handleInputChange} />
-        <button type="submit">Send</button>
-      </form>
-      <UserList users={connectedUsers} />
-    </div>
   );
 }
 
