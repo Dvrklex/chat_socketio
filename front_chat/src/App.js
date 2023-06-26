@@ -1,13 +1,23 @@
-import React from 'react';
-import Chat from './components/Chat';
+import React, { useState } from 'react';
+import ChatRoom from './components/ChatRoom';
+import UserForm from './components/UserForm';
 
-const App = () => {
+function App() {
+  const [username, setUsername] = useState('');
+
+  const handleUsernameSubmit = (name) => {
+    setUsername(name);
+  };
+
   return (
-    <div>
-      <h1>Bienvenido a Habbo Hotel!</h1>
-      <Chat />
+    <div className="container">
+      {username ? (
+        <ChatRoom username={username} />
+      ) : (
+        <UserForm handleUsernameSubmit={handleUsernameSubmit} />
+      )}
     </div>
   );
-};
+}
 
 export default App;

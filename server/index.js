@@ -1,42 +1,58 @@
 const express = require("express");
-const app = express();
 const http = require("http");
-const server = http.createServer(app);
 const { Server } = require("socket.io");
-const { addUser, removeUser, getUsers, getUser, addMessage, getMessages } = require("./userModule");
-const io = new Server(server);
+const userModule = require("./userModule");
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" },
 });
 
 io.on("connection", (socket) => {
   socket.on("set nickname", (id, user) => {
-    addUser(id, user);
-    io.emit("userConnected", `${getUser(socket.id).nickname} se ha unido al chat!`);//,getMessages()
+    userModule.addUser(socket.id, user);
+    const connectedUsers = userModule.getUsers();
+    io.emit("userConnected", `${user} se ha unido al chat!`, userModule.getMessages(), connectedUsers);
     console.log("userConnected");
   });
 
   socket.on("disconnect", () => {
-    removeUser(socket.id);
-    io.emit("userDisconnected", `${getUser(socket.id).nickname} se ha desconectado...`);
+    const disconnectedUser = userModule.getUser(socket.id);
+    userModule.removeUser(socket.id);
+    if (disconnectedUser) {
+      const connectedUsers = userModule.getUsers();
+      io.emit("userDisconnected", `${disconnectedUser.nickname} se ha desconectado...`, connectedUsers);
+    }
     console.log("userDisconnected");
   });
 
   socket.on("chat message", (msg) => {
-    io.emit("chat message", `${getUser(socket.id).nickname}: ${msg}`, getMessages());
-    addMessage(socket.id, msg);
+    const user = userModule.getUser(socket.id);
+    if (user) {
+      const { nickname } = user;
+      io.emit("chat message", `${nickname}: ${msg}`, userModule.getMessages());
+      userModule.addMessage(socket.id, msg);
+    }
   });
 
   socket.on("typing", () => {
-    socket.broadcast.emit("typing", getUser(socket.id).nickname);
+    const user = userModule.getUser(socket.id);
+    if (user) {
+      const { nickname } = user;
+      io.emit("typing", nickname);
+    }
   });
 
   socket.on("typingStop", () => {
-    socket.broadcast.emit("typingStop");
+    const user = userModule.getUser(socket.id);
+    if (user) {
+      const { nickname } = user;
+      io.emit("typingStop", nickname);
+    }
   });
 });
 
 server.listen(3000, () => {
-  console.log("listening on *:4000");
+  console.log("listening on *:3000");
 });

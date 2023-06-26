@@ -1,29 +1,27 @@
-let users = {};
+let users = new Map();
 let messages = [];
 
 const userModule = {
   addUser: (id, nickname) => {
-    users[id] = { nickname: nickname, online: true };
+    users.set(id, { id: id, nickname: nickname, online: true });
   },
   removeUser: (id) => {
-    if (users[id]) {
-      users[id].online = false;
-    }
+    users.delete(id);
   },
   getUser: (id) => {
-    return users[id];
+    return users.get(id);
   },
   addMessage: (id, message) => {
-    if (users[id]) {
-      messages.push({ id: id, message: message, nickname: users[id].nickname });
+    if (users.has(id)) {
+      messages.push({ id: id, message: message, nickname: users.get(id).nickname });
     }
   },
   getMessages: () => {
     return messages;
   },
   getUsers: () => {
-    return Object.values(users).filter(user => user.online);
-  }
+    return Array.from(users.values());
+  },
 };
 
 module.exports = userModule;
